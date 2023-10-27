@@ -1,0 +1,161 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGJeLS</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <style>
+    body {
+        font-family: 'Trueno', sans-serif;
+        margin: 0;
+        padding: 2%;
+        background-color: transparent;
+        color: white;
+        overflow-y: hidden;
+    }
+
+    #heard-container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        background-color: transparent;
+        color: white;
+        padding: 2%;
+    }
+
+    #heard {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .flex {
+        position:fixed;
+        display: flex;
+    }
+
+    .box {
+        background-color: #1944BA;
+        padding: 10px 10px 10px 10px;
+        border-radius: 10px 10px 10px 10px;
+        width: 90%;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .boxoblique {
+        background: linear-gradient(150deg, #1944BA 50%, white 50%);
+        padding: 10px;
+        width: 90%;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        backdrop-filter: blur(0px);
+        -webkit-text-stroke: 1.3px #0b0909; /* Outline for webkit browsers */
+        color: white !important;
+    }
+
+    .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .center {
+        display: flex;
+        justify-content: center;
+    }
+
+    #playing-container {
+        position: fixed;
+        bottom: 0;
+        background-color: transparent;
+        color: white;
+        padding-bottom: 2%;
+        width: 105vw;
+    }
+    #justplayed {
+        clear:both;   
+    }
+
+    img {
+        float:right;   
+    }
+    
+    .fade-in-out {
+        animation: fade-in-out 1s;
+    }
+
+    .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    @keyframes fade-in-out {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    
+
+    .container {
+        display: flex;
+        justify-content: center; 
+        align-items: center; 
+        height:90vh;
+    }
+
+
+    </style>
+</head>
+<body style="padding: 2%; background-color: transparent; color: white;">
+    <div class="flex">
+        <img src="/img/iconfomix.jpg" width="75" height="75" style="border-radius: 10px; opacity: 1;">
+    </div>
+    <div id="playing-container" style="font-size: 20px;">
+        <div style="display: inline-block; color: white;" class="boxoblique">
+            <b id="ChangeTextTemp">
+                Nu op Radio Fomix:
+                <a id="playing"></a>
+            </b>
+        </div>
+    </div>
+    <div class="container">
+        <div class="centered-element" id="ads" style="font-size: 40px;">
+
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var lastPlayedSong = "";
+            var firstSongFaded = false;
+            var uniqueSongs = [];
+    
+            setInterval(() => {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://api.radiofomix.nl/api/nowplaying/1', true);
+                xhr.send();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var json = JSON.parse(xhr.responseText);
+                        var artist = json.now_playing.song.artist;
+                        var title = json.now_playing.song.title;
+                        var playing = artist + ' - ' + title;
+                        document.getElementById('playing').innerHTML = playing;
+                        document.getElementById('playing').style.width = document.getElementById('playing').offsetWidth + 'px';
+                    }
+                }
+            }, 1000);
+        });
+        setInterval(() => {
+            
+        }, 1000);
+    </script>     
+</body>
+</html>

@@ -1,0 +1,27 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<div class="flex justify-center items-center h-screen" id="lol">
+    <div style="background-color: #1944BA;" class="rounded-xl text-white p-2 w-fit h-fit left-0 items-center">
+        <p class="font-bold text-2xl mb-3">Fomix Weer</p>
+
+        <IFRAME SRC="https://gadgets.buienradar.nl/gadget/radarfivedays" class="rounded-xl" NORESIZE SCROLLING=NO HSPACE=0 VSPACE=0 FRAMEBORDER=0 MARGINHEIGHT=0 MARGINWIDTH=0 WIDTH=256 HEIGHT=406></IFRAME>
+    </div>
+</div>
+
+<script>
+$("#lol").fadeOut(3000);
+var faded = false;
+setInterval(() => {
+    if(faded) {
+        $("#lol").fadeOut(1000);
+        faded = false;
+    } else {
+        $("#lol").fadeIn(1000);
+        faded = true;
+    }
+}, 60000);
+ 
+setInterval(() => {
+    window.location.reload();
+}, 300000);
+</script>

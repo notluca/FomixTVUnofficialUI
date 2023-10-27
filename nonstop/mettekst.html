@@ -1,0 +1,237 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DGJeLS</title>
+    <style>
+    body {
+        font-family: 'Trueno', sans-serif;
+        margin: 0;
+        padding: 2%;
+        background-color: transparent;
+        color: white;
+        overflow-y: hidden;
+    }
+
+    #heard-container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        background-color: transparent;
+        color: white;
+        padding: 2%;
+    }
+
+    #heard {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .flex {
+        position:fixed;
+        display: flex;
+    }
+
+    .box {
+        background-color: #1944BA;
+        padding: 10px 10px 10px 10px;
+        border-radius: 10px 10px 10px 10px;
+        width: 90%;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .center {
+        display: flex;
+        justify-content: center;
+    }
+
+    #playing-container {
+        position: fixed;
+        bottom: 0;
+        background-color: transparent;
+        color: white;
+        padding-bottom: 2%;
+        width: 105vw;
+    }
+    #justplayed {
+        clear:both;   
+    }
+    .boxoblique {
+        background: linear-gradient(150deg, #1944BA 50%, white 50%);
+        padding: 10px;
+        width: 90%;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        backdrop-filter: blur(0px);
+        text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.2); 
+        -webkit-text-stroke: 1.3px #000; /* Outline for webkit browsers */
+        color: white !important;
+        text-stroke: 1.3px #000; 
+        border-radius: 10px 10px 10px 10px;
+    }
+
+    img {
+        float:right;
+    }
+    
+    .fade-in-out {
+        animation: fade-in-out 1s;
+    }
+
+    .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    @keyframes fade-in-out {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    
+
+    .container {
+        display: flex;
+        justify-content: center; 
+        align-items: center; 
+        height:90vh;
+    }
+
+
+    </style>
+</head>
+<body style="padding: 2%; background-color: transparent; color: white;">
+    <div class="flex">
+        <img src="/img/iconfomix.jpg" width="150" height="150" style="border-radius: 10px;">
+        <div id="heard-container" style="justify-content: right; align-items:center; width: 20vw;">
+            <div class="box" style="text-align: center; font-size: 20px;">
+                <b>Zojuist afgespeeld</b>
+            </div>
+            <div id="justplayed"></div>
+        </div>
+    </div>
+    <div id="playing-container" style="font-size: 20px;">
+        <div style="display: inline-block; color: white;" class="boxoblique">
+            <b>
+                Nu op Radio Fomix:
+                <a id="playing"></a>
+            </b>
+        </div>
+    </div>
+    <div class="container">
+        <div class="centered-element" id="ads" style="font-size: 40px;">
+            <b>Fomix Non-Stop.</b><br>
+            24/7 de beste hits!
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var lastPlayedSong = "";
+            var firstSongFaded = false;
+            var uniqueSongs = [];
+    
+            setInterval(() => {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://api.radiofomix.nl/api/nowplaying/1', true);
+                xhr.send();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var json = JSON.parse(xhr.responseText);
+                        var artist = json.now_playing.song.artist;
+                        var title = json.now_playing.song.title;
+                        var playing = artist + ' - ' + title;
+    
+                        var song_history = json.song_history;
+    
+                        var newSong = artist + ' ' + title;
+                        if (newSong !== lastPlayedSong) {
+                            if (firstSongFaded) {
+                                // Remove fade-in-out class from all previous elements
+                                var allSongDivs = document.querySelectorAll('.box');
+                                allSongDivs.forEach(function (songDiv) {
+                                    songDiv.classList.remove('fade-in-out');
+                                });
+                            }
+                            
+                            var justplayedDiv = document.getElementById('justplayed');
+                            justplayedDiv.classList.add('fade-in-out');
+                            firstSongFaded = true;
+    
+                            lastPlayedSong = newSong;
+                        }
+    
+                        document.getElementById('justplayed').innerHTML = '';
+                        uniqueSongs = []; // Clear the list of unique songs
+    
+                        for (var i = 0; i < song_history.length; i++) {
+                            var artist = song_history[i].song.artist;
+                            var title = song_history[i].song.title;
+                            var songText = artist + ' ' + title;
+    
+                            if (!uniqueSongs.includes(songText)) {
+                                // Display the song if it's not a duplicate
+                                uniqueSongs.push(songText);
+    
+                                var mainDiv = document.createElement('div');
+                                mainDiv.className = 'box';
+                                mainDiv.style.display = 'flex';
+                                mainDiv.style.marginBottom = '10px';
+                                mainDiv.classList.add('truncate');
+    
+                                if (i == 0) {
+                                    mainDiv.style.marginTop = '10px';
+                                }
+    
+                                var art = song_history[i].song.art;
+                                var img = document.createElement('img');
+                                img.src = art;
+                                img.width = 55;
+                                img.height = 55;
+                                img.style.borderRadius = '10px';
+                                img.style.marginRight = '20px';
+    
+                                mainDiv.appendChild(img);
+    
+                                var div = document.createElement('div');
+                                div.style.fontSize = '20px';
+                                div.style.marginBottom = '10px';
+                                div.classList.add('truncate');
+                                div.innerHTML = artist;
+    
+                                var div2 = document.createElement('div');
+                                div2.style.fontSize = '15px';
+                                div2.classList.add('truncate');
+                                div2.innerHTML = title;
+    
+                                mainDiv.appendChild(div);
+                                div.appendChild(div2);
+    
+                                document.getElementById('justplayed').appendChild(mainDiv);
+                            }
+                        }
+                    
+
+                        document.getElementById('playing').innerHTML = playing;
+                        document.getElementById('playing').style.width = document.getElementById('playing').offsetWidth + 'px';
+                    }
+                }
+            }, 1000);
+        });
+    </script>     
+</body>
+</html>
