@@ -8,7 +8,7 @@
         Onze programmering is spraakmakend en gevarieerd. Of je nu houdt van energieke ochtendshows om je dag goed te beginnen, meeslepende talkshows voor de laatste nieuwtjes, of avondprogramma's met de nieuwste hits en underground tracks, bij Radio Fomix hebben we voor elk wat wils. Onze shows worden samengesteld door een gepassioneerd team dat altijd op zoek is naar nieuwe en opwindende manieren om je te vermaken en te informeren.
         <br><br>    
         <div class="bg-white rounded-xl">
-            <iframe src="https://www.weeronline.nl/widget/weather?id=4058223" width="900px" height="350px" frameborder="0"></iframe>
+            <iframe src="https://www.weeronline.nl/widget/weather?id=4058223" width="900px" height="350px" frameborder="0"  id="weer"></iframe>
         </div>
     </p>
 </div>
@@ -17,4 +17,30 @@
 setInterval(() => {
     window.location.reload();
 }, 300000);
+
+var weatherIds = [
+    4058223,
+    4058675,
+    4057864,
+    4057517,
+    4057438,
+    4056536
+]
+var count = 0;
+
+setInterval(() => {
+    count = count + 1;
+
+    if(count > 6) {
+        count = 0;
+    }
+    var weatherId = weatherIds[count];
+    console.log(weatherId);
+
+    $("#weer").fadeOut(1000);
+    var weather = document.getElementById("weer");
+    weather.src = "https://www.weeronline.nl/widget/weather?id=" + weatherId;
+    $("#weer").fadeIn(1000);
+}, 10000);
+
 </script>
