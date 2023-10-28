@@ -45,7 +45,6 @@
     }
 
     .boxoblique {
-        background: linear-gradient(150deg, #1944BA 50%, white 50%);
         padding: 10px;
         width: 90%;
         white-space: nowrap !important;
@@ -119,10 +118,12 @@
     </div>
     <div id="playing-container" style="font-size: 20px;">
         <div style="display: inline-block; color: white;" class="boxoblique">
-            <b id="ChangeTextTemp">
-                Nu op Radio Fomix:
-                <a id="playing"></a>
-            </b>
+            <div id="ChangeTextTemp" style="display: flex;">
+                <div style="border-radius: 10px 10px 10px 10px; background-image: url(img/iconfomix.jpg); width: 43px; height: 43px; background-size: cover;"></div>
+                <b style="margin-top: 10px; flex-direction: column; margin-left: 20px;">
+                    <a id="playing"></a>
+                </b>
+            </div>
         </div>
     </div>
     <div class="container">
@@ -136,7 +137,8 @@
             var lastPlayedSong = "";
             var firstSongFaded = false;
             var uniqueSongs = [];
-    
+            $("#ChangeTextTemp").hide();
+            
             setInterval(() => {
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', 'https://api.radiofomix.nl/api/nowplaying/1', true);
@@ -147,8 +149,48 @@
                         var artist = json.now_playing.song.artist;
                         var title = json.now_playing.song.title;
                         var playing = artist + ' - ' + title;
-                        document.getElementById('playing').innerHTML = playing;
-                        document.getElementById('playing').style.width = document.getElementById('playing').offsetWidth + 'px';
+
+                        if(playing != lastPlayedSong) {
+                            var element = $("#ChangeTextTemp");
+
+                            if(!element.is(":visible")) {
+                                element.fadeIn(1000);
+
+                                setTimeout(() => {
+                                    for (let i = 0; i < playing.length; i++) {
+                                        setTimeout(() => {
+                                            document.getElementById("playing").innerHTML += playing[i];
+                                        }, i * 40);
+                                    }
+                                }, 100);
+
+                                setTimeout(() => {
+                                    var text = document.getElementById("playing").innerHTML;
+
+                                    for (let i = 0; i < text.length - 1; i++) {
+                                        setTimeout(() => {
+                                            document.getElementById("playing").innerHTML = text.substring(0, text.length - i - 1);
+                                        }, i * 40);
+                                    }
+                                    setTimeout(() => {
+                                        document.getElementById("playing").innerHTML = "";
+                                    }, text.length * 40);
+
+                                    setTimeout(() => {
+                                        $("#ChangeTextTemp").fadeOut(200);
+                                    }, text.length * 40 + 1000);
+
+                                }, 8000);
+
+                                lastPlayedSong = playing;
+                            } else {
+                                setTimeout(() => {
+                                    if(!element.is(":visible")) {
+                                        element.fadeIn(1000);
+                                    }
+                                }, 1000);
+                            }
+                        }
                     }
                 }
             }, 1000);
