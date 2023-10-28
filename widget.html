@@ -29,18 +29,19 @@ var weatherIds = [
 var count = 0;
 
 setInterval(() => {
+    $("#weer").fadeOut(200);
+
     count = count + 1;
 
-    if(count > 6) {
+    if(count >= 6) {
         count = 0;
     }
     var weatherId = weatherIds[count];
     console.log(weatherId);
 
-    $("#weer").fadeOut(1000);
     var weather = document.getElementById("weer");
     weather.src = "https://www.weeronline.nl/widget/weather?id=" + weatherId;
-    $("#weer").fadeIn(1000);
+    $("#weer").fadeIn(200);
 }, 10000);
 
 </script>
